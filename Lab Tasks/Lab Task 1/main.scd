@@ -1,3 +1,5 @@
+//LAB TAST 1 (Parts I & II)
+
 (
 
 (Document.current.dir +/+ "synthDefs.scd").load;
@@ -8,8 +10,10 @@
 
 ~server.waitForBoot({
 
-	~buffers = PathName(Document.current.dir +/+ "Sounds/").files.collect{ |pathName, increment|
-		CtkBuffer(pathName.fullPath).load
+	~sounds = "../sounds/*".resolveRelative.pathMatch;
+
+	~buffers = ~sounds.collect{ |pathName, increment|
+		CtkBuffer(pathName).load
 	};
 
 	~audioBuss = CtkAudio.play(1, server: ~server);

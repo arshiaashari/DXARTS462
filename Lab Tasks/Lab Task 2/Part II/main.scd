@@ -1,3 +1,5 @@
+//LAB TASK 2 (Part II)
+
 (
 
 (Document.current.dir +/+ "synthDefs.scd").load;
@@ -8,8 +10,10 @@
 
 ~server.waitForBoot({
 
-	~buffers = PathName(Document.current.dir +/+ "Sounds/").files.collect{ |pathName, increment|
-		CtkBuffer(pathName.fullPath).load
+	~sounds = "../../sounds/*".resolveRelative.pathMatch;
+
+	~buffers = ~sounds.collect{ |pathName, increment|
+		CtkBuffer(pathName).load
 	};
 
 	~rateSpec = ControlSpec(0.25, 4.0, 'exp');
@@ -33,7 +37,9 @@
 	//this is the reverb - it's the FreeVerb2 for stereo sound in the SynthDefs file
 	~reverbNote = ~myPlayBufPNotes['reverb'].note(addAction: 'tail').in_(~audioBuss).play;
 
-	~iPhone = NetAddr("10.19.196.215", 9000);
+	//the first argument in NetAddr is the Local IP Address in TochOSC
+	//Note that TouchOSC's Host also needs to be set to the IP Address to this machine's wifi connection
+	~iPhone = NetAddr("10.18.254.169", 9000);
 
     //this maps the playback speed to the OSC knob
     ~rate = OSCFunc({ |msg, time, addr, recPort|
