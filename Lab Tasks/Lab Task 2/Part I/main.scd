@@ -2,6 +2,9 @@
 
 (
 
+// need to connect the MIDI device
+MIDIIn.connectAll;
+
 (Document.current.dir +/+ "synthDefs.scd").load;
 
 
