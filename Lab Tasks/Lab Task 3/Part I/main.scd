@@ -1,9 +1,11 @@
 //LAB TASK 3 (Part I)
 
-MIDIIn.connectAll;
+
 
 
 (
+
+MIDIIn.connectAll;
 
 (Document.current.dir +/+ "synthDefs.scd").load;
 

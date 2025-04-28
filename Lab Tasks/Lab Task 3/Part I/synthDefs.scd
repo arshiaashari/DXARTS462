@@ -51,7 +51,7 @@ HelpBrowser.openLink("link::Tutorials/Getting Practice/ProjectSHARCWTsWPs::")
 			// amplitude envelope
 			ampEnvSig = EnvGen.kr(
 				Env.linen(riseTime, dur - (riseTime + decayTime), decayTime),  // Env: *linen
-				levelScale: amp
+				levelScale: amp,
 				doneAction: Done.freeSelf
 			);  // EnvGen (control rate)
 
