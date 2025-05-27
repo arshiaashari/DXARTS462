@@ -65,28 +65,19 @@ MIDIIn.connectAll;
 	//this is the reverb - it's the FreeVerb2 for stereo sound in the SynthDefs file
 	~reverbNote = ~myPlayBufPNotes['reverb'].note(addAction: 'tail').in_(~audioBuss).play;
 
-	//this maps the playback speed to the MIDI knob
-	~midiRate = MIDIFunc.cc({ |val, num, chan, src|
-        ~rate = ~rateSpec.map(val.linlin(0, 127, 0, 1))
-    }, ccNum: 0);
+	//the first argument in NetAddr is the Local IP Address in TochOSC
+	//Note that TouchOSC's Host also needs to be set to the IP Address to this machine's wifi connection
+	~iPhone = NetAddr("10.18.254.169", 9000);
 
-	//this maps the pan angle speed to the MIDI knob
-	~midiPan = MIDIFunc.cc({ |val, num, chan, src|
-        ~panAngle = ~panSpec.map(val.linlin(0, 127, 0, 1))
-    }, ccNum: 1);
+    //this maps the playback speed to the OSC knob
+    ~rate = OSCFunc({ |msg, time, addr, recPort|
+        ~note.rate_(~rateSpec.map(msg[1]))
+    }, '/1/fader1', ~iPhone);
 
-	//a MIDI button starts & stops the scheduling — the if statement makes it so that only the first press–down runs the code, not the release of the button
-	~midiStart = MIDIFunc.cc({ |val, num, chan, src|
-		(val == 127).if({ ~events.next; })
-	}, 64);
-
-	//THE FOLLOWING IS NOT NEEDED WHEN USING THE ProcMod Event ABOVE BECAUSE THE ProcMod DOES THE STARTING AND STOPPING
-	/*
-	//a MIDI button stops the sound — the if statement makes it so that only the first press–down runs the code, not the release
-	~midiStop = MIDIFunc.cc({ |val, num, chan, src|
-		(val == 127).if({ ~task.stop; })
-	}, 65);
-	*/
+    //this maps the pan angle speed to the OSC knob
+    ~pan = OSCFunc({ |msg, time, addr, recPort|
+        ~note.panAngle_(~panSpec.map(msg[1]))
+    }, '/1/fader2', ~iPhone);
 
 	~hdr = HDR(
 		~server,
@@ -105,5 +96,5 @@ MIDIIn.connectAll;
 
 )
 
-MIDIFunc.trace();
-MIDIFunc.trace(false);
+OSCFunc.trace();
+OSCFunc.trace(false);

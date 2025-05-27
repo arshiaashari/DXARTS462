@@ -1,5 +1,3 @@
-//LAB TASK 2 (Part II)
-
 (
 
 (Document.current.dir +/+ "synthDefs.scd").load;
@@ -45,6 +43,8 @@
 	.loop_(1)
 	.play;
 
+	//iterating
+
 	//this is the reverb - it's the FreeVerb2 for stereo sound in the SynthDefs file
 	~reverbNote = ~myPlayBufPNotes['reverb'].note(addAction: 'tail').in_(~audioBuss).play;
 
@@ -62,12 +62,10 @@
         ~note.panAngle_(~panSpec.map(msg[1]))
     }, '/1/rotary1', ~iPhone);
 
-	//this maps the playback speed to the OSC knob
     ~rate = OSCFunc({ |msg, time, addr, recPort|
         ~note2.rate_(~rateSpec.map(msg[1]))
     }, '/1/fader2', ~iPhone);
 
-    //this maps the pan angle to the OSC knob
     ~pan = OSCFunc({ |msg, time, addr, recPort|
         ~note2.panAngle_(~panSpec.map(msg[1]))
     }, '/1/rotary4', ~iPhone);
