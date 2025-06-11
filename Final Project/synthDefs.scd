@@ -32,7 +32,7 @@ HelpBrowser.openLink("link::Tutorials/Getting Practice/ProjectSHARCWTsWPs::")
 		\dxarts46x_stereoPlayBuf,  // name - as Symbol
 
 		{ |dur = 1.0, gain = 0.0, riseTime = 0.01, decayTime = 0.01, rate = 1, panAngle = 0,
-			loop = 0, bufnum = 0, outBus = 0|  // UGen graph function
+			loop = 0, bufnum = 0, outBus = 0, lpfFreq = 10000, lpfRes = 0.5, volume = 1.0|  // UGen graph function
 
             // vars for UGens
             var ampEnvSig;
@@ -52,11 +52,13 @@ HelpBrowser.openLink("link::Tutorials/Getting Practice/ProjectSHARCWTsWPs::")
 			ampEnvSig = EnvGen.kr(
 				Env.linen(riseTime, dur - (riseTime + decayTime), decayTime),  // Env: *linen
 				levelScale: amp,
-				doneAction: Done.freeSelf
 			);  // EnvGen (control rate)
 
 			// sample playback
 			playBufSig = PlayBuf.ar(numChannels, bufnum,  BufRateScale.kr(bufnum) * rate, loop: loop);
+
+			// Apply lowpass filter (RLPF is resonant LPF)
+			playBufSig = RLPF.ar(playBufSig, lpfFreq, lpfRes);
 
 			// apply -linen envelope
 			// ... reuse playBufSig var
@@ -67,7 +69,7 @@ HelpBrowser.openLink("link::Tutorials/Getting Practice/ProjectSHARCWTsWPs::")
 			panSig = Balance2.ar(playBufSig[0], playBufSig[1], pos);  // Balance2 (audio rate)
 
 			// assign to out
-			outSig = panSig;
+			outSig = panSig * volume;
 
 			Out.ar(
 				outBus,  // out bus - set as an argument
@@ -80,5 +82,5 @@ HelpBrowser.openLink("link::Tutorials/Getting Practice/ProjectSHARCWTsWPs::")
 		var src;
 		src = In.ar(in, 2); // stereo buss
 		Out.ar(out, FreeVerb2.ar(src[0], src[1], 0.3, 0.3, 0.3))
-	})
+	});
 );
